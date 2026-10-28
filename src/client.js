@@ -17,7 +17,7 @@ window.__ModuleLoader__.load({
 
     var API = '/dsh-gd'
     var ROOT_ID = 'dsh-gd-root'
-    var FALLBACK_VERSION = '2.0.0'
+    var FALLBACK_VERSION = '2.0.1'
 
     var DEFAULTS = __GD_DEFAULTS__
 
@@ -51,6 +51,53 @@ window.__ModuleLoader__.load({
       document.body.appendChild(script)
     }
 
+    /* ── 桌面端标题栏（自举路径）────────────────────────────────────────────
+       splash.js 自己也会藏，但它要等 fetch 完才加载；这段在 fetch 之前就把
+       白块清掉，避免「点开就闪一下」。判定与运行时完全一致。 */
+    var TITLE_VARS = ['--dsw-specific-sidebar-fill', '--dsw-alias-label-primary']
+    var CLEAR = 'rgba(0, 0, 0, 0)'
+    var savedTitleVars = {}
+
+    function isDesktopWin() {
+      try {
+        var nav = typeof navigator !== 'undefined' ? navigator : null
+        if (!nav || !/Win/.test(nav.userAgent || '')) return false
+        var loc = typeof location !== 'undefined' ? location : null
+        if (loc && loc.protocol === 'dsh-app:') return true
+        return !!(document.documentElement && document.documentElement.hasAttribute &&
+          document.documentElement.hasAttribute('data-windows-titlebar'))
+      } catch (e) { return false }
+    }
+
+    function earlyHideTitlebar() {
+      try {
+        if (!isDesktopWin()) return
+        var probe = document.querySelector && document.querySelector('span[style*="dsw-specific-sidebar-fill"]')
+        if (probe && probe.style) {
+          probe.style.setProperty('background-color', CLEAR)
+          probe.style.setProperty('color', CLEAR)
+        }
+        var de = document.documentElement
+        if (!de) return
+        for (var i = 0; i < TITLE_VARS.length; i++) {
+          savedTitleVars[TITLE_VARS[i]] = de.style.getPropertyValue(TITLE_VARS[i])
+          de.style.setProperty(TITLE_VARS[i], CLEAR)
+        }
+      } catch (e) { /* 兜底 */ }
+    }
+
+    function restoreTitlebar() {
+      try {
+        var de = document.documentElement
+        if (!de) return
+        for (var i = 0; i < TITLE_VARS.length; i++) {
+          var saved = savedTitleVars[TITLE_VARS[i]]
+          if (saved) de.style.setProperty(TITLE_VARS[i], saved)
+          else de.style.removeProperty(TITLE_VARS[i])
+        }
+      } catch (e) { /* 兜底 */ }
+    }
+
     function selfBoot() {
       try {
         if (typeof window === 'undefined' || typeof document === 'undefined') return
@@ -59,18 +106,20 @@ window.__ModuleLoader__.load({
         if (window.__DSH_GD_BOOT__) return     /* 本侧已自举 */
         window.__DSH_GD_BOOT__ = true
 
+        earlyHideTitlebar()
+
         fetch(API + '/config', { headers: { Accept: 'application/json' } })
           .then(function (r) { return r.json() })
           .then(function (j) {
             var cfg = (j && j.config) || Object.assign({}, DEFAULTS)
-            if (cfg.enabled === false) return
+            if (cfg.enabled === false) { restoreTitlebar(); return }
             var today = new Date().toISOString().slice(0, 10)
-            if (cfg.mode === 'session' && readFlag('sessionStorage', 'dsh-gd:shown') === '1') return
-            if (cfg.mode === 'daily' && readFlag('localStorage', 'dsh-gd:day') === today) return
-            if (cfg.mode === 'once' && readFlag('localStorage', 'dsh-gd:once') === '1') return
+            if (cfg.mode === 'session' && readFlag('sessionStorage', 'dsh-gd:shown') === '1') { restoreTitlebar(); return }
+            if (cfg.mode === 'daily' && readFlag('localStorage', 'dsh-gd:day') === today) { restoreTitlebar(); return }
+            if (cfg.mode === 'once' && readFlag('localStorage', 'dsh-gd:once') === '1') { restoreTitlebar(); return }
             injectRoot(cfg)
           })
-          .catch(function () { /* 自举失败就不播，不影响宿主 */ })
+          .catch(function () { restoreTitlebar() /* 自举失败就不播，不影响宿主 */ })
       } catch (e) { /* 兜底 */ }
     }
 
