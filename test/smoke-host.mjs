@@ -31,11 +31,12 @@ const ctx = {
 }
 mod.apply(ctx)
 const byPath = Object.fromEntries(routes.map((r) => [r.path, r]))
-check('注册了 4 条路由', routes.length === 4, String(routes.length))
+check('注册了 5 条路由', routes.length === 5, String(routes.length))
 check('有 splash.css', !!byPath['/dsh-gd/splash.css'])
 check('有 splash.js', !!byPath['/dsh-gd/splash.js'])
 check('有 config', !!byPath['/dsh-gd/config'])
 check('有 replay', !!byPath['/dsh-gd/replay'])
+check('有 update', !!byPath['/dsh-gd/update'])
 check('注册了 tapIndex', taps.length === 1)
 
 function fakeReq(method, body, url) {
