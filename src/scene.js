@@ -26,10 +26,39 @@ function buildScene() {
           '<stop offset="0" stop-color="#fff2b0" stop-opacity="0.55"/>' +
           '<stop offset="1" stop-color="#ffb648" stop-opacity="0"/>' +
         '</radialGradient>' +
+        '<linearGradient id="gdAurora" x1="0" y1="0" x2="1" y2="0">' +
+          '<stop offset="0" stop-color="#4fe6c0" stop-opacity="0"/>' +
+          '<stop offset="0.32" stop-color="#4fe6c0" stop-opacity="0.5"/>' +
+          '<stop offset="0.68" stop-color="#7fb6ff" stop-opacity="0.38"/>' +
+          '<stop offset="1" stop-color="#7fb6ff" stop-opacity="0"/>' +
+        '</linearGradient>' +
+        '<radialGradient id="gdHalo" cx="0.5" cy="0.5" r="0.5">' +
+          '<stop offset="0" stop-color="#8ef2d0" stop-opacity="0.20"/>' +
+          '<stop offset="1" stop-color="#8ef2d0" stop-opacity="0"/>' +
+        '</radialGradient>' +
+        '<filter id="gdSoft" x="-30%" y="-30%" width="160%" height="160%">' +
+          '<feGaussianBlur stdDeviation="18"/>' +
+        '</filter>' +
+        '<filter id="gdSoftSoft" x="-40%" y="-40%" width="180%" height="180%">' +
+          '<feGaussianBlur stdDeviation="9"/>' +
+        '</filter>' +
       '</defs>' +
 
       '<rect width="1200" height="700" fill="url(#gdSky)"/>' +
-      '<ellipse cx="600" cy="300" rx="540" ry="330" fill="#1f6a7a" opacity="0.20"/>' +
+
+      '<g class="gd-aurora" filter="url(#gdSoft)">' +
+        '<path d="M-120 190 C 180 100, 460 250, 740 160 S 1180 110, 1320 180" stroke="url(#gdAurora)" stroke-width="96" fill="none" stroke-linecap="round" opacity="0.42"/>' +
+        '<path d="M-120 286 C 220 206, 500 330, 800 240 S 1220 200, 1320 270" stroke="url(#gdAurora)" stroke-width="58" fill="none" stroke-linecap="round" opacity="0.26"/>' +
+      '</g>' +
+
+      '<g class="gd-cloud gd-cloud-a" fill="#cfeaff" opacity="0.10" filter="url(#gdSoftSoft)">' +
+        '<path d="M120 168 q 26 -34 74 -30 q 22 -30 66 -22 q 30 -20 64 4 q 40 -8 58 22 q 34 -2 40 24 q -26 14 -70 8 q -46 12 -98 4 q -54 10 -104 -2 q -24 -2 -30 -8 z"/>' +
+      '</g>' +
+      '<g class="gd-cloud gd-cloud-b" fill="#cfeaff" opacity="0.08" filter="url(#gdSoftSoft)">' +
+        '<path d="M812 344 q 30 -32 82 -28 q 24 -26 70 -18 q 32 -18 66 6 q 42 -6 60 22 q 32 0 38 22 q -28 14 -72 8 q -48 12 -102 4 q -56 10 -108 -2 q -22 -6 -34 -14 z"/>' +
+      '</g>' +
+
+      '<ellipse class="gd-haze" cx="600" cy="300" rx="540" ry="330" fill="url(#gdHalo)"/>' +
 
       '<g class="gd-orb">' +
         '<circle cx="190" cy="150" r="58" fill="#c9c0a8" opacity="0.85"/>' +
@@ -41,6 +70,14 @@ function buildScene() {
       '</g>' +
       '<g class="gd-orb"><circle cx="140" cy="560" r="46" fill="#8fd96a" opacity="0.78"/></g>' +
       '<g class="gd-orb"><circle cx="1070" cy="540" r="62" fill="#5f9fd6" opacity="0.72"/></g>' +
+
+      '<g class="gd-debris">' +
+        '<ellipse cx="336" cy="556" rx="20" ry="13" fill="#6b5544" opacity="0.85"/>' +
+        '<ellipse cx="878" cy="576" rx="24" ry="15" fill="#5a4a3a" opacity="0.8"/>' +
+        '<ellipse cx="962" cy="432" rx="13" ry="9" fill="#6b5544" opacity="0.72"/>' +
+      '</g>' +
+
+      '<ellipse class="gd-island-halo" cx="600" cy="430" rx="312" ry="162" fill="url(#gdHalo)"/>' +
 
       '<g class="gd-island">' +
         '<path d="M380 410 C380 520 470 600 600 600 C730 600 820 520 820 410 Z" fill="url(#gdRock)"/>' +
@@ -81,6 +118,10 @@ function buildLayer(cfg) {
     '<div class="gd-black"></div>' +
     buildScene() +
     '<div class="gd-stars"></div>' +
+    '<div class="gd-meteors"></div>' +
+    '<div class="gd-fireflies"></div>' +
+    '<div class="gd-console"><div class="gd-console-bar">世界控制台 · 正在生成</div>' +
+      '<div class="gd-console-body"></div></div>' +
     '<div class="gd-copy">' +
       '<div class="gd-title">' + escapeHtml(cfg.title) + '</div>' +
       '<div class="gd-sub">' + escapeHtml(cfg.sub) + '</div>' +
@@ -88,7 +129,8 @@ function buildLayer(cfg) {
     (cfg.showLoading === false
       ? ''
       : '<div class="gd-load"><div class="gd-load-bar"><i></i></div></div>') +
-    (cfg.allowSkip === false ? '' : '<div class="gd-hint">点击任意处进入</div>')
+    (cfg.allowSkip === false ? '' : '<div class="gd-hint">点击任意处进入</div>') +
+    ''
 }
 
 function escapeHtml(value) {
