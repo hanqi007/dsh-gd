@@ -1,6 +1,6 @@
 {
   "name": "dsh-gd",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "DeepSeek Harness 启动动画（星布谷地）：一座漂浮在星海上的小岛，草地、树影、亮着灯的小屋与四颗漂移的小星球，标题浮现后揭幕。全部原创内联 SVG + CSS 绘制，不含任何外部素材。带设置面板：播放时机、速度倍率、停留时长、标题文案、跳过与加载条；web profile 与 DeepSeek Harness Desktop 桌面端通用。",
   "keywords": [
     "dsh",
