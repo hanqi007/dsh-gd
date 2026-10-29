@@ -233,6 +233,88 @@ function writeFlag(area, key, value) {
   if (window.__DSH_GD_DONE__) return
   window.__DSH_GD_DONE__ = true
 
+  /* ── 开机自检：先跑环境和自身检查（带加载动画），再进主场景 ─────────────── */
+  var SC_ITEMS = [
+    { name: '运行环境', detail: 'window / document', fn: function () { return typeof window !== 'undefined' && typeof document !== 'undefined' } },
+    { name: 'Canvas 渲染', detail: '2d', fn: function () { try { var c = document.createElement('canvas'); return !!(c.getContext && c.getContext('2d')) } catch (e) { return false } } },
+    { name: '本地存储', detail: 'storage', fn: function () { try { window.localStorage.setItem('__gd_t', '1'); window.localStorage.removeItem('__gd_t'); return true } catch (e) { return false } } },
+    { name: '网络能力', detail: 'fetch', fn: function () { return typeof fetch === 'function' } },
+    { name: 'DSH 宿主', detail: 'root', fn: function () { try { return !!document.getElementById('${ROOT_ID}') } catch (e) { return false } } },
+    { name: '插件配置', detail: '__DSH_GD_CONFIG__', fn: function () { try { return !!window.__DSH_GD_CONFIG__ } catch (e) { return true } } }
+  ]
+
+  function runSelfCheck() {
+    return new Promise(function (resolve) {
+      var wrap = document.createElement('div')
+      wrap.id = 'gd-selfcheck'
+      var style = document.createElement('style')
+      style.textContent = [
+        '#gd-selfcheck{position:fixed;inset:0;z-index:2147483646;background:#04070c;color:#dff2ff;',
+        'font:13px/1.55 "Microsoft YaHei","Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;',
+        'align-items:center;justify-content:center;gap:13px;transition:opacity 300ms ease}',
+        '#gd-selfcheck.done{opacity:0}',
+        '#gd-selfcheck .sc-title{font-size:14px;letter-spacing:.24em;color:#8fd6ff;text-transform:uppercase}',
+        '#gd-selfcheck .sc-sub{font-size:11.5px;color:rgba(200,226,255,.45);letter-spacing:.1em}',
+        '#gd-selfcheck .sc-list{width:min(400px,86vw);display:flex;flex-direction:column;gap:6px;margin-top:6px}',
+        '#gd-selfcheck .sc-row{display:flex;align-items:center;gap:9px;padding:6px 10px;border:1px solid rgba(143,214,255,.12);',
+        'border-radius:8px;background:rgba(143,214,255,.04);opacity:.32;transition:opacity 180ms,border-color 180ms}',
+        '#gd-selfcheck .sc-row.on{opacity:1;border-color:rgba(143,214,255,.4)}',
+        '#gd-selfcheck .sc-name{flex:1}',
+        '#gd-selfcheck .sc-detail{font-size:10.5px;color:rgba(200,226,255,.35);font-family:Consolas,monospace}',
+        '#gd-selfcheck .sc-mark{width:14px;text-align:center;font-weight:700}',
+        '#gd-selfcheck .sc-bar{width:min(400px,86vw);height:2px;background:rgba(143,214,255,.12);border-radius:2px;overflow:hidden}',
+        '#gd-selfcheck .sc-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8fd6ff,#dff2ff);transition:width 180ms ease}'
+      ].join('')
+      document.head.appendChild(style)
+      wrap.innerHTML = '<div class="sc-title">SELF CHECK</div>' +
+        '<div class="sc-sub">星布谷地 · 开机自检</div>' +
+        '<div class="sc-list"></div>' +
+        '<div class="sc-bar"><i></i></div>'
+      var list = wrap.querySelector('.sc-list')
+      var bar = wrap.querySelector('.sc-bar i')
+      var rows = []
+      for (var i = 0; i < SC_ITEMS.length; i++) {
+        var row = document.createElement('div')
+        row.className = 'sc-row'
+        row.innerHTML = '<span class="sc-name">' + SC_ITEMS[i].name +
+          '</span><span class="sc-detail">' + SC_ITEMS[i].detail +
+          '</span><span class="sc-mark"></span>'
+        list.appendChild(row)
+        rows.push(row)
+      }
+      document.body.appendChild(wrap)
+
+      var idx = 0
+      function stepNext() {
+        if (idx >= SC_ITEMS.length) {
+          bar.style.width = '100%'
+          setTimeout(function () {
+            wrap.classList.add('done')
+            setTimeout(function () {
+              try { if (wrap.parentNode) wrap.parentNode.removeChild(wrap) } catch (e) {}
+              try { if (style.parentNode) style.parentNode.removeChild(style) } catch (e) {}
+              resolve()
+            }, 300)
+          }, 220)
+          return
+        }
+        var item = SC_ITEMS[idx]
+        var row = rows[idx]
+        row.classList.add('on')
+        var ok = false
+        try { ok = !!item.fn() } catch (e) { ok = false }
+        var mark = row.querySelector('.sc-mark')
+        mark.textContent = ok ? '✓' : '×'
+        mark.style.color = ok ? '#8fe3b0' : '#ff8f8f'
+        if (!ok) row.style.borderColor = 'rgba(255,120,120,.45)'
+        bar.style.width = Math.round(((idx + 1) / SC_ITEMS.length) * 100) + '%'
+        idx++
+        setTimeout(stepNext, 130)
+      }
+      setTimeout(stepNext, 120)
+    })
+  }
+
   var cfg = Object.assign({}, DEFAULTS, window.__DSH_GD_CONFIG__ || {})
   cfg.speed = num(cfg.speed, 1, 0.35, 3)
   cfg.duration = num(cfg.duration, DEFAULTS.duration, 1200, 20000)
@@ -261,6 +343,8 @@ function writeFlag(area, key, value) {
 
   var doc = document.documentElement
   try { doc.classList.add('gd-lock') } catch (e) {}
+  /* 自检和主场景并行：自检覆盖在最上层，1.1 秒后淡出，主场景正好接上 */
+  try { runSelfCheck() } catch (e) { /* 自检失败也照常播 */ }
   /* 根节点注入时是隐藏的：确定要播才显示，跳过时一帧黑屏都不会出现 */
   try { root.style.display = '' } catch (e) {}
   /* 桌面端：播放期间把标题栏那块白底一起藏掉，揭幕时还原 */
@@ -269,8 +353,11 @@ function writeFlag(area, key, value) {
   var finished = false
   var timers = []
 
+  /* 自检动画大约 1.1 秒：主时间线整体往后挪，避免两层叠在一起 */
+  var SC_DELAY = 1150
+
   function at(ms, fn) {
-    timers.push(setTimeout(fn, Math.round(ms / cfg.speed)))
+    timers.push(setTimeout(fn, Math.round(ms / cfg.speed + SC_DELAY)))
   }
 
   root.innerHTML = buildLayer(cfg)
