@@ -177,3 +177,93 @@ html.gd-lock body {
   overflow: hidden !important;
   background: #04070d !important;
 }
+
+
+/* ── 极光 ─────────────────────────────────────────────────────────────── */
+.gd-aurora {
+  animation: gd-aurora-flow calc(20s / var(--gd-speed)) ease-in-out infinite;
+}
+
+@keyframes gd-aurora-flow {
+  0%, 100% { transform: translateX(-34px); opacity: .72; }
+  50% { transform: translateX(34px); opacity: 1; }
+}
+
+/* ── 云层 ─────────────────────────────────────────────────────────────── */
+.gd-cloud { animation: gd-cloud-drift calc(28s / var(--gd-speed)) linear infinite; }
+.gd-cloud-b { animation-duration: calc(36s / var(--gd-speed)); animation-delay: -9s; }
+
+@keyframes gd-cloud-drift {
+  0% { transform: translateX(-56px); opacity: .45; }
+  50% { opacity: 1; }
+  100% { transform: translateX(56px); opacity: .45; }
+}
+
+/* ── 中央光雾 ─────────────────────────────────────────────────────────── */
+.gd-haze { animation: gd-haze-breathe calc(7s / var(--gd-speed)) ease-in-out infinite; }
+
+@keyframes gd-haze-breathe {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+/* ── 浮空碎石 ─────────────────────────────────────────────────────────── */
+.gd-debris {
+  animation: gd-debris-float calc(6.5s / var(--gd-speed)) ease-in-out infinite;
+  transform-origin: 600px 500px;
+}
+
+@keyframes gd-debris-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-9px) rotate(.6deg); }
+}
+
+/* ── 岛屿光环 ─────────────────────────────────────────────────────────── */
+.gd-island-halo {
+  animation: gd-halo-breathe calc(5.2s / var(--gd-speed)) ease-in-out infinite;
+  transform-origin: 600px 430px;
+}
+
+@keyframes gd-halo-breathe {
+  0%, 100% { opacity: .38; transform: scale(1); }
+  50% { opacity: .78; transform: scale(1.07); }
+}
+
+/* ── 萤火虫 ───────────────────────────────────────────────────────────── */
+.gd-fireflies { position: absolute; inset: 0; pointer-events: none; }
+
+.gd-fireflies i {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffe6a0;
+  box-shadow: 0 0 10px 3px rgba(255, 198, 92, .62);
+  opacity: 0;
+  animation: gd-firefly ease-in-out infinite;
+}
+
+@keyframes gd-firefly {
+  0% { transform: translate(0, 0) scale(.65); opacity: 0; }
+  22% { opacity: .92; }
+  58% { opacity: .45; }
+  100% { transform: translate(var(--dx, 10px), var(--dy, -32px)) scale(1.05); opacity: 0; }
+}
+
+/* ── 流星 ─────────────────────────────────────────────────────────────── */
+.gd-meteors { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.gd-meteors i {
+  position: absolute;
+  width: 130px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(210,240,255,.95));
+  box-shadow: 0 0 10px rgba(180, 226, 255, .7);
+  opacity: 0;
+  animation: gd-meteor linear forwards;
+}
+
+@keyframes gd-meteor {
+  0% { opacity: 0; translate: 0 0; }
+  12% { opacity: 1; }
+  100% { opacity: 0; translate: 260px 92px; }
+}
