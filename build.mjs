@@ -30,10 +30,17 @@ function read(name) {
   return fs.readFileSync(path.join(SRC, name), 'utf8')
 }
 
+const LICENSE_BANNER = [
+  '/* dsh-gd — 星布谷地开机动画',
+  ' * Copyright 2026 hanlin (hanqi007)',
+  ' * Licensed under the Apache License 2.0 with additional terms.',
+  ' * See LICENSE and LICENSE-CUSTOM.md. */'
+].join('\n')
+
 function wrapRuntime(scene, runtime) {
   return [
     '/* dsh-gd runtime — 由 src/scene.js + src/boot.js 构建，请勿手改 */',
-    '(function () {',
+    LICENSE_BANNER + '\n' + '(function () {',
     '  \'use strict\'',
     '',
     scene.trim(),
