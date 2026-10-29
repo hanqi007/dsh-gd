@@ -232,6 +232,15 @@ function writeFlag(area, key, value) {
 
   if (cfg.enabled === false) { bail(); return }
 
+  /* 无障碍：系统开启「减少动态效果」时直接跳过，不播动画 */
+  try {
+    if (cfg.respectReducedMotion !== false &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      bail(); return
+    }
+  } catch (e) { /* 兼容旧内核 */ }
+
   var today = new Date().toISOString().slice(0, 10)
   if (cfg.mode === 'session' && readFlag('sessionStorage', 'dsh-gd:shown') === '1') { bail(); return }
   if (cfg.mode === 'daily' && readFlag('localStorage', 'dsh-gd:day') === today) { bail(); return }
@@ -258,7 +267,10 @@ function writeFlag(area, key, value) {
     var box = root.querySelector('.gd-stars')
     if (box) {
       var frag = document.createDocumentFragment()
-      for (var i = 0; i < 110; i++) {
+      /* 自适应星数：小窗口少画点，减少重绘压力 */
+      var area = Math.max(1, window.innerWidth * window.innerHeight)
+      var starCount = Math.max(40, Math.min(110, Math.round(area / 12000)))
+      for (var i = 0; i < starCount; i++) {
         var s = document.createElement('i')
         s.style.left = (Math.random() * 100).toFixed(2) + '%'
         s.style.top = (Math.random() * 100).toFixed(2) + '%'
@@ -274,10 +286,94 @@ function writeFlag(area, key, value) {
     }
   } catch (e) { /* 星点只是装饰 */ }
 
+  /* 萤火虫：岛屿周围浮动的暖光点，各自带随机位移 */
+  try {
+    var fbox = root.querySelector('.gd-fireflies')
+    if (fbox) {
+      var flyCount = window.innerWidth < 900 ? 10 : 20
+      for (var fi = 0; fi < flyCount; fi++) {
+        var fly = document.createElement('i')
+        fly.style.left = (33 + Math.random() * 34).toFixed(2) + '%'
+        fly.style.top = (40 + Math.random() * 28).toFixed(2) + '%'
+        fly.style.animationDelay = (-Math.random() * 7).toFixed(2) + 's'
+        fly.style.animationDuration = (4.4 + Math.random() * 4).toFixed(2) + 's'
+        fly.style.setProperty('--dx', (Math.random() * 44 - 22).toFixed(1) + 'px')
+        fly.style.setProperty('--dy', (-26 - Math.random() * 46).toFixed(1) + 'px')
+        fly.style.width = fly.style.height = (Math.random() < 0.3 ? 5 : 4) + 'px'
+        fbox.appendChild(fly)
+      }
+    }
+  } catch (e) { /* 装饰 */ }
+
+  /* 流星：隔几秒斜划一颗，随时可能来，但不会太密 */
+  try {
+    var mbox = root.querySelector('.gd-meteors')
+    if (mbox) {
+      var meteorTimer = 0
+      var spawnMeteor = function () {
+        if (!mbox.parentNode || finished) return
+        var m = document.createElement('i')
+        m.style.left = (6 + Math.random() * 72).toFixed(1) + '%'
+        m.style.top = (4 + Math.random() * 34).toFixed(1) + '%'
+        m.style.animationDuration = (1.05 + Math.random() * 0.75).toFixed(2) + 's'
+        m.style.transform = 'rotate(' + (18 + Math.random() * 16).toFixed(0) + 'deg)'
+        mbox.appendChild(m)
+        setTimeout(function () {
+          if (m.parentNode) m.parentNode.removeChild(m)
+        }, 2600)
+        meteorTimer = setTimeout(spawnMeteor, 1500 + Math.random() * 2400)
+      }
+      meteorTimer = setTimeout(spawnMeteor, 700)
+      timers.push(meteorTimer)
+    }
+  } catch (e) { /* 装饰 */ }
+
   var black = root.querySelector('.gd-black')
   at(240, function () {
     if (black) black.classList.add('gd-clear')
   })
+
+  /* 收尾：场景压暗 → 控制台淡入 → 逐行打印 → 交给 finish */
+  try {
+    var sceneSv = root.querySelector('.gd-scene')
+    var consoleEl = root.querySelector('.gd-console')
+    var consoleBody = root.querySelector('.gd-console-body')
+    var CONSOLE_LINES = [
+      '> 初始化世界坐标',
+      '  完成 · 1200 × 700',
+      '> 生成岛屿地形',
+      '  完成 · 512 块草皮',
+      '> 播种植被与树影',
+      '  完成 · 2 棵成树',
+      '> 点亮小屋灯火',
+      '  完成 · 暖光常亮',
+      '> 安置浮空星球',
+      '  完成 · 四轨锁定',
+      '> 世界生成完毕',
+      '  欢迎来到星布谷地'
+    ]
+    if (sceneSv && consoleEl && consoleBody) {
+      at(Math.max(1400, cfg.duration - 3600), function () {
+        sceneSv.classList.add('gd-dim')
+      })
+      at(Math.max(1700, cfg.duration - 3300), function () {
+        consoleEl.classList.add('gd-in')
+        var i = 0
+        var tick = function () {
+          if (finished) return
+          var line = document.createElement('div')
+          var txt = CONSOLE_LINES[i]
+          var isResult = txt.indexOf('  完成') === 0 || txt.indexOf('  欢迎') === 0
+          line.className = 'gd-console-line' + (isResult ? ' gd-ok' : '')
+          line.textContent = CONSOLE_LINES[i]
+          consoleBody.appendChild(line)
+          i++
+          if (i < CONSOLE_LINES.length) timers.push(setTimeout(tick, 190))
+        }
+        tick()
+      })
+    }
+  } catch (e) { /* 控制台只是过场 */ }
 
   function finish(skipped) {
     if (finished) return

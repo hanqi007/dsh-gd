@@ -151,11 +151,17 @@
 
 .gd-hint {
   position: absolute;
-  right: 26px;
-  bottom: 22px;
+  right: 30px;
+  bottom: 30px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(170, 210, 245, .22);
+  background: rgba(6, 14, 22, .42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   font-size: 11.5px;
   letter-spacing: .18em;
-  color: rgba(190, 215, 245, .42);
+  color: rgba(214, 233, 252, .82);
   pointer-events: none;
   opacity: 0;
   animation: gd-copy-in calc(800ms / var(--gd-speed)) ease calc(1800ms / var(--gd-speed)) forwards;
@@ -176,4 +182,181 @@ html.gd-lock,
 html.gd-lock body {
   overflow: hidden !important;
   background: #04070d !important;
+}
+
+
+/* ── 极光 ─────────────────────────────────────────────────────────────── */
+.gd-aurora {
+  animation: gd-aurora-flow calc(20s / var(--gd-speed)) ease-in-out infinite;
+}
+
+@keyframes gd-aurora-flow {
+  0%, 100% { transform: translateX(-34px); opacity: .72; }
+  50% { transform: translateX(34px); opacity: 1; }
+}
+
+/* ── 云层 ─────────────────────────────────────────────────────────────── */
+.gd-cloud { animation: gd-cloud-drift calc(28s / var(--gd-speed)) linear infinite; }
+.gd-cloud-b { animation-duration: calc(36s / var(--gd-speed)); animation-delay: -9s; }
+
+@keyframes gd-cloud-drift {
+  0% { transform: translateX(-56px); opacity: .45; }
+  50% { opacity: 1; }
+  100% { transform: translateX(56px); opacity: .45; }
+}
+
+/* ── 中央光雾 ─────────────────────────────────────────────────────────── */
+.gd-haze { animation: gd-haze-breathe calc(7s / var(--gd-speed)) ease-in-out infinite; }
+
+@keyframes gd-haze-breathe {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+/* ── 浮空碎石 ─────────────────────────────────────────────────────────── */
+.gd-debris {
+  animation: gd-debris-float calc(6.5s / var(--gd-speed)) ease-in-out infinite;
+  transform-origin: 600px 500px;
+}
+
+@keyframes gd-debris-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-9px) rotate(.6deg); }
+}
+
+/* ── 岛屿光环 ─────────────────────────────────────────────────────────── */
+.gd-island-halo {
+  animation: gd-halo-breathe calc(5.2s / var(--gd-speed)) ease-in-out infinite;
+  transform-origin: 600px 430px;
+}
+
+@keyframes gd-halo-breathe {
+  0%, 100% { opacity: .38; transform: scale(1); }
+  50% { opacity: .78; transform: scale(1.07); }
+}
+
+/* ── 萤火虫 ───────────────────────────────────────────────────────────── */
+.gd-fireflies { position: absolute; inset: 0; pointer-events: none; }
+
+.gd-fireflies i {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffe6a0;
+  box-shadow: 0 0 10px 3px rgba(255, 198, 92, .62);
+  opacity: 0;
+  animation: gd-firefly ease-in-out infinite;
+}
+
+@keyframes gd-firefly {
+  0% { transform: translate(0, 0) scale(.65); opacity: 0; }
+  22% { opacity: .92; }
+  58% { opacity: .45; }
+  100% { transform: translate(var(--dx, 10px), var(--dy, -32px)) scale(1.05); opacity: 0; }
+}
+
+/* ── 流星 ─────────────────────────────────────────────────────────────── */
+.gd-meteors { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.gd-meteors i {
+  position: absolute;
+  width: 130px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(210,240,255,.95));
+  box-shadow: 0 0 10px rgba(180, 226, 255, .7);
+  opacity: 0;
+  animation: gd-meteor linear forwards;
+}
+
+@keyframes gd-meteor {
+  0% { opacity: 0; translate: 0 0; }
+  12% { opacity: 1; }
+  100% { opacity: 0; translate: 260px 92px; }
+}
+
+
+/* ── 场景压暗（控制台过场用）──────────────────────────────────────────── */
+.gd-scene.gd-dim {
+  opacity: .22;
+  transition: opacity calc(760ms / var(--gd-speed)) ease;
+}
+
+/* ── 控制台过场 ───────────────────────────────────────────────────────── */
+.gd-console {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  transform: translateX(-50%);
+  width: min(430px, 58vw);
+  padding: 12px 16px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(110, 220, 198, .28);
+  background: rgba(4, 10, 13, .84);
+  box-shadow: 0 0 28px rgba(0, 0, 0, .5), inset 0 0 32px rgba(80, 220, 190, .05);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-family: ui-monospace, Consolas, "Liberation Mono", monospace;
+  font-size: 11.5px;
+  line-height: 1.85;
+  color: #bfe9dd;
+  letter-spacing: .02em;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  transition: opacity calc(420ms / var(--gd-speed)) ease;
+}
+
+.gd-console.gd-in { opacity: 1; }
+
+.gd-console-bar {
+  font-size: 9.5px;
+  letter-spacing: .2em;
+  color: rgba(110, 220, 198, .62);
+  border-bottom: 1px solid rgba(110, 220, 198, .16);
+  padding-bottom: 7px;
+  margin-bottom: 8px;
+}
+
+.gd-console-line {
+  opacity: 0;
+  white-space: pre;
+  animation: gd-console-in calc(200ms / var(--gd-speed)) ease forwards;
+}
+
+.gd-console-line.gd-ok { color: #9be8c8; }
+
+@keyframes gd-console-in {
+  to { opacity: 1; }
+}
+
+
+/* ── 无障碍：系统要求减少动态效果时，全部动画停下来 ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gd-island,
+  .gd-orb,
+  .gd-window,
+  .gd-aurora,
+  .gd-cloud,
+  .gd-debris,
+  .gd-island-halo,
+  .gd-fireflies i,
+  .gd-meteors i,
+  .gd-stars i {
+    animation: none !important;
+  }
+  .gd-copy,
+  .gd-load,
+  .gd-hint {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* 把常驻动画提到合成层，减少主线程重绘 */
+.gd-island,
+.gd-aurora,
+.gd-cloud,
+.gd-debris,
+.gd-island-halo {
+  will-change: transform, opacity;
 }
