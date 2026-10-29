@@ -115,17 +115,17 @@ check('星点数量在 40-110 之间（按窗口面积自适应）', a.stars.len
 check('每颗都有位置', a.stars[0].style.left != null && a.stars[0].style.top != null)
 
 console.log('\n[3] 时序（按速度缩放）')
-const t240 = a.timers.find((t) => t.ms === 1390)
-check('有 1390ms 清黑（240 + 自检 1150）', !!t240)
-const tEnd = a.timers.find((t) => t.ms === 7350)
-check('有 7350ms 自动揭幕（6200 + 自检 1150）', !!tEnd)
+const t240 = a.timers.find((t) => t.ms === 240)
+check('有 240ms 清黑', !!t240)
+const tEnd = a.timers.find((t) => t.ms === 6200)
+check('有 6200ms 自动揭幕', !!tEnd)
 
 const fast = run({ config: { speed: 2, duration: 6200 } })
-check('速度 2 → 1270ms 清黑', !!fast.timers.find((t) => t.ms === 1270), JSON.stringify(fast.timers.map((t) => t.ms)))
-check('速度 2 → 4250ms 揭幕', !!fast.timers.find((t) => t.ms === 4250))
+check('速度 2 → 120ms 清黑', !!fast.timers.find((t) => t.ms === 120), JSON.stringify(fast.timers.map((t) => t.ms)))
+check('速度 2 → 3100ms 揭幕', !!fast.timers.find((t) => t.ms === 3100))
 
 const slow = run({ config: { speed: 0.5, duration: 6200 } })
-check('速度 0.5 → 13550ms 揭幕', !!slow.timers.find((t) => t.ms === 13550))
+check('速度 0.5 → 12400ms 揭幕', !!slow.timers.find((t) => t.ms === 12400))
 
 console.log('\n[4] 跳过')
 check('注册了 click', a.added.indexOf('click') !== -1)
