@@ -1,3 +1,16 @@
+/**
+ * dsh-gd — 星布谷地开机动画
+ * Copyright 2026 hanlin (hanqi007)
+ *
+ * Licensed under the Apache License, Version 2.0, with additional terms:
+ *   - Apache 2.0 full text .... LICENSE
+ *   - Additional restrictions . LICENSE-CUSTOM.md
+ *
+ * 允许免费使用与分发；不得以本软件为收费主体，
+ * 也不得在自身不是收费主体的前提下进行收费分发。
+ * Free to use and distribute, but you may not charge for the software
+ * itself, nor charge for distributing it.
+ */
 /* ============================================================================
  * dsh-gd — 运行时（播放、时序、跳过、揭幕）
  * ----------------------------------------------------------------------------
