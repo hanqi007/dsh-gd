@@ -84,6 +84,8 @@ function run(opts) {
       removeEventListener() {}
     },
     window: {
+      innerWidth: 1440,
+      innerHeight: 900,
       sessionStorage: storage('session'),
       localStorage: storage('local'),
       __DSH_GD_CONFIG__: opts.config || undefined
@@ -109,7 +111,7 @@ check('有跳过提示', a.root.innerHTML.includes('点击任意处进入'))
 check('播放时解除隐藏', a.root.style.display === '')
 
 console.log('\n[2] 星尘')
-check('生成了 110 颗星', a.stars.length === 110, String(a.stars.length))
+check('星点数量在 40-110 之间（按窗口面积自适应）', a.stars.length >= 40 && a.stars.length <= 110, String(a.stars.length))
 check('每颗都有位置', a.stars[0].style.left != null && a.stars[0].style.top != null)
 
 console.log('\n[3] 时序（按速度缩放）')

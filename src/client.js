@@ -17,7 +17,7 @@ window.__ModuleLoader__.load({
 
     var API = '/dsh-gd'
     var ROOT_ID = 'dsh-gd-root'
-    var FALLBACK_VERSION = '2.0.1'
+    var FALLBACK_VERSION = '2.4.3'
 
     var DEFAULTS = __GD_DEFAULTS__
 
