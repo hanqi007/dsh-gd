@@ -229,6 +229,22 @@ function writeFlag(area, key, value) {
   'use strict'
 
   var root = document.getElementById(ROOT_ID)
+  /* ── 主题：整体色调预设 ─────────────────────────────────────────────────── */
+  var THEMES = {
+    aurora:   { name: '极光',   filter: '' },
+    dusk:     { name: '黄昏',   filter: 'hue-rotate(-32deg) saturate(1.22) brightness(1.03)' },
+    midnight: { name: '深夜',   filter: 'hue-rotate(14deg) brightness(0.88) saturate(0.92)' },
+    sakura:   { name: '樱',     filter: 'hue-rotate(112deg) saturate(1.18)' },
+    ember:    { name: '余烬',   filter: 'hue-rotate(-55deg) saturate(1.35) brightness(0.96)' }
+  }
+
+  function applyTheme(node, id) {
+    var theme = THEMES[id] || THEMES.aurora
+    if (node && node.style) node.style.filter = theme.filter
+    return theme
+  }
+
+
   if (!root) return
   if (window.__DSH_GD_DONE__) return
   window.__DSH_GD_DONE__ = true
@@ -264,6 +280,9 @@ function writeFlag(area, key, value) {
   }
 
   var cfg = Object.assign({}, DEFAULTS, window.__DSH_GD_CONFIG__ || {})
+  /* 主题：未配置时用默认 */
+  applyTheme(root, (cfg && cfg.theme) || 'aurora')
+
   cfg.speed = num(cfg.speed, 1, 0.35, 3)
   cfg.duration = num(cfg.duration, DEFAULTS.duration, 1200, 20000)
 
