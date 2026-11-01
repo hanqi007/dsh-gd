@@ -31,7 +31,7 @@ const ctx = {
 }
 mod.apply(ctx)
 const byPath = Object.fromEntries(routes.map((r) => [r.path, r]))
-check('注册了 5 条路由', routes.length === 5, String(routes.length))
+check('注册了 6 条路由', routes.length === 6, String(routes.length))
 check('有 splash.css', !!byPath['/dsh-gd/splash.css'])
 check('有 splash.js', !!byPath['/dsh-gd/splash.js'])
 check('有 config', !!byPath['/dsh-gd/config'])
