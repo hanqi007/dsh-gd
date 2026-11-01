@@ -34,6 +34,10 @@
     "test": "node test/smoke-host.mjs && node test/smoke-splash.mjs && node test/smoke-panel.mjs"
   },
   "license": "SEE LICENSE IN LICENSE-CUSTOM.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanqi007/dsh-gd.git"
+  },
   "engines": {
     "node": ">=20"
   },
