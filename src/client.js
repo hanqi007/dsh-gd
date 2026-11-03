@@ -19,7 +19,7 @@
  * 2) 设置面板：注册到「设置」侧栏，改完保存到 Host。
  * ========================================================================== */
 window.__ModuleLoader__.load({
-  id: 'dsh-gd-v2',
+  id: 'dsh-gd',
   factory: (require) => {
     var module = { exports: {} }
     var exports = module.exports
@@ -29,65 +29,10 @@ window.__ModuleLoader__.load({
     var h = react.createElement
 
     var API = '/dsh-gd'
-
-    /* ── 主界面主题：即时应用 ──────────────────────────────────────────────
-       切换主题时直接改 <style> 的 textContent，不走页面刷新。
-       变量与 Host 首屏注入用的是同一套（--dsw-alias-*）。 */
-    var UI_STYLE_ID = 'gd-ui-theme-live'
-    var UI_THEMES = [
-      { id: 'default', name: '跟随系统', desc: '不覆盖任何变量', vars: {} },
-      { id: 'paper', name: '纸白', desc: '浅色底、深灰字', vars: { '--dsw-alias-bg-layer': '#ffffff', '--dsw-alias-bg-layer-2': '#f7f8fa', '--dsw-alias-bg-layer-3': '#eef0f4', '--dsw-alias-bg-secondary': '#f7f8fa', '--dsw-alias-label-primary': '#1f2430', '--dsw-alias-label-secondary': '#3a4150', '--dsw-alias-label-tertiary': '#697086', '--dsw-alias-border-secondary': '#e3e6ec', '--dsw-alias-border-l2': '#e3e6ec', '--dsw-alias-state-business-primary': '#2563eb', 'color-scheme': 'light' } },
-      { id: 'ink', name: '墨黑', desc: '深色底、柔和白字', vars: { '--dsw-alias-bg-layer': '#14161c', '--dsw-alias-bg-layer-2': '#1b1e26', '--dsw-alias-bg-layer-3': '#242833', '--dsw-alias-bg-secondary': '#1b1e26', '--dsw-alias-label-primary': '#e8ebf2', '--dsw-alias-label-secondary': '#c2c8d4', '--dsw-alias-label-tertiary': '#8b93a3', '--dsw-alias-border-secondary': '#2f3441', '--dsw-alias-border-l2': '#2f3441', '--dsw-alias-state-business-primary': '#6b9bff', 'color-scheme': 'dark' } },
-      { id: 'sand', name: '暖沙', desc: '米黄纸感', vars: { '--dsw-alias-bg-layer': '#fbf6ec', '--dsw-alias-bg-layer-2': '#f5eede', '--dsw-alias-bg-layer-3': '#ebe1cd', '--dsw-alias-bg-secondary': '#f5eede', '--dsw-alias-label-primary': '#3b3225', '--dsw-alias-label-secondary': '#5c5040', '--dsw-alias-label-tertiary': '#8a7b64', '--dsw-alias-border-secondary': '#ded2ba', '--dsw-alias-border-l2': '#ded2ba', '--dsw-alias-state-business-primary': '#b45309', 'color-scheme': 'light' } },
-      { id: 'azure', name: '苍蓝', desc: '冷调蓝灰', vars: { '--dsw-alias-bg-layer': '#f4f7fb', '--dsw-alias-bg-layer-2': '#eaf0f8', '--dsw-alias-bg-layer-3': '#dde6f2', '--dsw-alias-bg-secondary': '#eaf0f8', '--dsw-alias-label-primary': '#1c2a3a', '--dsw-alias-label-secondary': '#38495e', '--dsw-alias-label-tertiary': '#6c7d93', '--dsw-alias-border-secondary': '#cfdbe8', '--dsw-alias-border-l2': '#cfdbe8', '--dsw-alias-state-business-primary': '#0e7490', 'color-scheme': 'light' } },
-      { id: 'moss', name: '苔绿', desc: '低饱和绿', vars: { '--dsw-alias-bg-layer': '#f4f8f3', '--dsw-alias-bg-layer-2': '#e9f1e7', '--dsw-alias-bg-layer-3': '#dce8d9', '--dsw-alias-bg-secondary': '#e9f1e7', '--dsw-alias-label-primary': '#22301f', '--dsw-alias-label-secondary': '#3d4f39', '--dsw-alias-label-tertiary': '#6f8369', '--dsw-alias-border-secondary': '#d0ddcb', '--dsw-alias-border-l2': '#d0ddcb', '--dsw-alias-state-business-primary': '#2f7d4f', 'color-scheme': 'light' } },
-      { id: 'violet', name: '紫罗兰', desc: '淡紫底', vars: { '--dsw-alias-bg-layer': '#f8f5fd', '--dsw-alias-bg-layer-2': '#f0eaf9', '--dsw-alias-bg-layer-3': '#e5dcf4', '--dsw-alias-bg-secondary': '#f0eaf9', '--dsw-alias-label-primary': '#2c2338', '--dsw-alias-label-secondary': '#4a3d5c', '--dsw-alias-label-tertiary': '#7c6e91', '--dsw-alias-border-secondary': '#ddd2ee', '--dsw-alias-border-l2': '#ddd2ee', '--dsw-alias-state-business-primary': '#7c3aed', 'color-scheme': 'light' } },
-      { id: 'amber', name: '琥珀', desc: '暖橙、深色底', vars: { '--dsw-alias-bg-layer': '#191410', '--dsw-alias-bg-layer-2': '#221a14', '--dsw-alias-bg-layer-3': '#2e231a', '--dsw-alias-bg-secondary': '#221a14', '--dsw-alias-label-primary': '#f5e9dc', '--dsw-alias-label-secondary': '#d8c6b2', '--dsw-alias-label-tertiary': '#9c8873', '--dsw-alias-border-secondary': '#3a2c20', '--dsw-alias-border-l2': '#3a2c20', '--dsw-alias-state-business-primary': '#f59e0b', 'color-scheme': 'dark' } },
-      { id: 'sakura', name: '樱粉', desc: '浅粉底', vars: { '--dsw-alias-bg-layer': '#fff7f9', '--dsw-alias-bg-layer-2': '#fdedf1', '--dsw-alias-bg-layer-3': '#f8dde4', '--dsw-alias-bg-secondary': '#fdedf1', '--dsw-alias-label-primary': '#38222a', '--dsw-alias-label-secondary': '#5a3d47', '--dsw-alias-label-tertiary': '#8d6c77', '--dsw-alias-border-secondary': '#efd0d9', '--dsw-alias-border-l2': '#efd0d9', '--dsw-alias-state-business-primary': '#db2777', 'color-scheme': 'light' } }
-    ]
-    function applyUiTheme(theme) {
-      var vars = (theme && theme.ui) || {}
-      var keys = Object.keys(vars)
-      var node = document.getElementById(UI_STYLE_ID)
-      if (!keys.length) {
-        if (node && node.parentNode) node.parentNode.removeChild(node)
-        return
-      }
-      if (!node) {
-        node = document.createElement('style')
-        node.id = UI_STYLE_ID
-        node.setAttribute('data-boot-ui-theme', '1')
-        document.head.appendChild(node)
-      }
-      node.textContent = ':root{' + keys.map(function (k) { return k + ':' + vars[k] + ';' }).join('') + '}'
-    }
-    function loadUiTheme() {
-      fetch(API + '/config', { headers: { Accept: 'application/json' } })
-        .then(function (r) { return r.json() })
-        .then(function (j) {
-          var cfg = (j && j.config) || {}
-          var hit = UI_THEMES.filter(function (x) { return x.id === (cfg.uiTheme || 'default') })[0] || UI_THEMES[0]
-          applyUiTheme(hit)
-        })
-        .catch(function () { /* 拿不到就保持现状 */ })
-    }
-    if (typeof document !== 'undefined') {
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadUiTheme, { once: true })
-      else loadUiTheme()
-    }
     var ROOT_ID = 'dsh-gd-root'
-    var FALLBACK_VERSION = '2.7.0-beta.6'
+    var FALLBACK_VERSION = '2.4.3'
 
-    var DEFAULTS = {
-  "enabled": true,
-  "mode": "session",
-  "speed": 1,
-  "duration": 6200,
-  "title": "星布谷地",
-  "sub": "LOOMIX · GUDI",
-  "allowSkip": true,
-  "showLoading": true
-}
+    var DEFAULTS = __GD_DEFAULTS__
 
     /* ── 自举 ────────────────────────────────────────────────────────────── */
     function readFlag(area, key) {
@@ -240,123 +185,11 @@ window.__ModuleLoader__.load({
 
     /* ── 面板 ────────────────────────────────────────────────────────────── */
     function Panel() {
-      function loadThemes() {
-        fetch(API + '/themes', { headers: { Accept: 'application/json' } })
-          .then(function (r) { return r.json() })
-          .then(function (j) { setThemes(j && j.themes ? j.themes : []); setThemeDir(j && j.dir ? j.dir : '') })
-          .catch(function () { setThemes([]) })
-      }
-
-      function importTheme() {
-        var p2 = String(importPath || '').trim()
-        if (!p2) { setNotice('先填一个目录路径'); return }
-        fetch(API + '/themes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ importDir: p2 })
-        })
-          .then(function (r) { return r.json() })
-          .then(function (j) {
-            if (!j || j.ok !== true) throw new Error((j && j.error) || '导入失败')
-            setThemes(j.themes || [])
-            setNotice('已导入主题 ' + j.id)
-            setImportPath('')
-          })
-          .catch(function (e) { setNotice('导入失败：' + String(e && e.message ? e.message : e)) })
-      }
-
-      function deleteTheme(id) {
-        if (!window.confirm('删除主题 ' + id + ' ？')) return
-        fetch(API + '/themes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ delete: id })
-        })
-          .then(function (r) { return r.json() })
-          .then(function (j) {
-            if (!j || j.ok !== true) throw new Error((j && j.error) || '删除失败')
-            setThemes(j.themes || [])
-            if (draft.theme === id) set('theme', 'aurora')
-          })
-          .catch(function (e) { setNotice('删除失败：' + String(e && e.message ? e.message : e)) })
-      }
-
-      function uiThemeGrid() {
-        var cur = draft.uiTheme || 'default'
-        return h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '8px' } },
-          UI_THEMES.map(function (t) {
-            var on = cur === t.id
-            var v = t.vars || {}
-            return h('div', {
-              key: t.id,
-              onClick: function () {
-                set('uiTheme', t.id)
-                applyUiTheme(t)
-              },
-              style: {
-                cursor: 'pointer', padding: '5px', borderRadius: '8px',
-                border: '2px solid ' + (on ? '#4fe0a8' : 'var(--dsw-alias-border-l2)'),
-                background: on ? 'rgba(79,224,168,0.08)' : 'transparent'
-              }
-            },
-              h('div', { style: { display: 'flex', height: '34px', borderRadius: '5px', overflow: 'hidden', border: '1px solid var(--dsw-alias-border-secondary)' } },
-                h('i', { style: { flex: '1', background: v['--dsw-alias-bg-layer'] || '#ffffff' } }),
-                h('i', { style: { flex: '1', background: v['--dsw-alias-label-primary'] || '#1f2430' } }),
-                h('i', { style: { flex: '1', background: v['--dsw-alias-state-business-primary'] || '#2563eb' } })
-              ),
-              h('div', { style: { fontSize: '12px', fontWeight: 600, marginTop: '4px' } }, t.name),
-              h('div', { style: { fontSize: '11px', opacity: .68, lineHeight: 1.3 } }, t.desc)
-            )
-          })
-        )
-      }
-
-      function themeGrid() {
-        if (!themes) return h('div', { className: '__gd_hint' }, '读取主题中…')
-        return h('div', {
-          style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(126px, 1fr))', gap: '9px' }
-        }, themes.map(function (t) {
-          var active = draft.theme === t.id
-          var thumb = t.bg
-            ? h('img', {
-              src: 'data:image/svg+xml;utf8,' + encodeURIComponent(t.bg),
-              alt: t.name,
-              style: { width: '100%', height: '50px', objectFit: 'cover', borderRadius: '6px', display: 'block' }
-            })
-            : h('div', {
-              style: { width: '100%', height: '50px', borderRadius: '6px', background: (t.colors && t.colors.accent) || '#666' }
-            })
-          return h('div', {
-            key: t.id,
-            onClick: function () { set('theme', t.id); applyUiTheme(t) },
-            style: {
-              cursor: 'pointer', padding: '5px', borderRadius: '8px',
-              border: '2px solid ' + (active ? '#4fe0a8' : 'var(--dsw-alias-border-l2)'),
-              background: active ? 'rgba(79,224,168,0.08)' : 'transparent'
-            }
-          },
-            thumb,
-            h('div', { style: { fontSize: '12px', fontWeight: 600, marginTop: '4px' } },
-              t.name,
-              t.user ? h('span', { style: { fontSize: '10.5px', color: '#4fe0a8', marginLeft: '3px' } }, '导入') : null),
-            h('div', { style: { fontSize: '11px', opacity: .68, lineHeight: 1.3 } }, t.desc || ''),
-            t.user ? h('button', {
-              className: '__gd_btn',
-              style: { marginTop: '3px', padding: '0 6px', fontSize: '11px', color: '#e5484d' },
-              onClick: function (e) { e.stopPropagation(); deleteTheme(t.id) }
-            }, '删除') : null
-          )
-        }))
-      }
-
       var [draft, setDraft] = react.useState(null)
       var [version, setVersion] = react.useState(FALLBACK_VERSION)
       var [error, setError] = react.useState(null)
       var [notice, setNotice] = react.useState(null)
       var [busy, setBusy] = react.useState(false)
-      var [themes, setThemes] = react.useState(null)
-      var [themeDir, setThemeDir] = react.useState('')
-      var [importPath, setImportPath] = react.useState('')
 
       function set(key, value) {
         setDraft(function (d) {
@@ -380,7 +213,7 @@ window.__ModuleLoader__.load({
           .catch(function (e) { setError('读取失败：' + String(e && e.message ? e.message : e)) })
       }
 
-      react.useEffect(function () { load(); loadThemes() }, [])
+      react.useEffect(function () { load() }, [])
 
       function save() {
         setBusy(true)
@@ -416,31 +249,6 @@ window.__ModuleLoader__.load({
         h('div', { className: '__gd_row' },
           h('span', { className: '__gd_version' }, '版本 v' + version),
           h('button', { className: '__gd_btn', onClick: preview }, '立即预览')),
-
-        h('div', { className: '__gd_group' },
-          h('div', { className: '__gd_groupTitle' }, '主题'),
-          h('div', { className: '__gd_hint' }, '内置主题的图案全部由代码生成（纯几何 SVG），不含任何外部素材。'),
-          themeGrid(),
-          h(Field, { label: '导入主题目录', hint: '目录里要有 theme.json；导入后复制到 ' + (themeDir || '~/.dsh/gd-themes') },
-            h('div', { className: '__gd_row' },
-              h('input', {
-                className: '__gd_input',
-                style: { flex: '1', minWidth: '180px' },
-                placeholder: '例如 D:\\my-theme',
-                value: importPath,
-                onChange: function (e) { setImportPath(e.target.value) }
-              }),
-              h('button', { className: '__gd_btn', onClick: importTheme }, '导入')
-            )
-          )
-        ),
-
-        h('div', { className: '__gd_group' },
-          h('div', { className: '__gd_groupTitle' }, '主界面主题'),
-          h('div', { className: '__gd_hint' },
-            '只改 DSH 界面的配色（侧边栏、对话区、按钮），与上面的开机动画主题完全独立。'),
-          uiThemeGrid()
-        ),
 
         h('div', { className: '__gd_group' },
           h('div', { className: '__gd_groupTitle' }, '播放'),
@@ -545,7 +353,7 @@ window.__ModuleLoader__.load({
       ctx.effect(function () { return removeStyle })
       ctx.slots.inject('settings.section', function () {
         return ctx.slots.register(
-          { name: 'settings.section', id: 'dsh-gd-v2', order: 29, label: '星布谷地 ✓主题' },
+          { name: 'settings.section', id: 'dsh-gd', order: 29, label: '星布谷地' },
           function () { return h(Panel, {}) }
         )
       })

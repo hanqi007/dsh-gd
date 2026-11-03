@@ -67,8 +67,8 @@ const ctx = {
   effect(fn) { return fn() }
 }
 mod.apply(ctx)
-check('注册 id 是 dsh-gd', !!registered && registered.def.id === 'dsh-gd-v2')
-check('section 标签是「星布谷地」', !!registered && registered.def.label.indexOf('星布谷地') === 0)
+check('注册 id 是 dsh-gd', !!registered && registered.def.id === 'dsh-gd')
+check('section 标签是「星布谷地」', !!registered && registered.def.label === '星布谷地')
 check('order 是 29', !!registered && registered.def.order === 29)
 
 const draft = {
