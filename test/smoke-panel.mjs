@@ -114,7 +114,7 @@ function textOf(node) {
 
 function render(state) {
   hookIndex = 0
-  presets = [state, '2.0.0', null, null, false, null, '', '']
+  presets = [state, '2.0.0', null, null, false]
   const out = []
   walk(registered.render(), out)
   return out
@@ -144,7 +144,7 @@ check('速度按倍率显示', view.some((n) => n.text === '1.00×'))
 console.log('\n[2] 未加载时的占位')
 const loading = (() => {
   hookIndex = 0
-  presets = [null, '2.0.0', null, null, false, null, '', '']
+  presets = [null, '2.0.0', null, null, false]
   const out = []
   walk(registered.render(), out)
   return out
