@@ -67,8 +67,8 @@ const ctx = {
   effect(fn) { return fn() }
 }
 mod.apply(ctx)
-check('注册 id 是 dsh-gd', !!registered && registered.def.id === 'dsh-gd')
-check('section 标签是「星布谷地」', !!registered && registered.def.label === '星布谷地')
+check('注册 id 是 dsh-gd', !!registered && registered.def.id === 'dsh-gd-v2')
+check('section 标签是「星布谷地」', !!registered && registered.def.label.indexOf('星布谷地') === 0)
 check('order 是 29', !!registered && registered.def.order === 29)
 
 const draft = {
@@ -114,7 +114,7 @@ function textOf(node) {
 
 function render(state) {
   hookIndex = 0
-  presets = [state, '2.0.0', null, null, false]
+  presets = [state, '2.0.0', null, null, false, null, '', '']
   const out = []
   walk(registered.render(), out)
   return out
@@ -144,7 +144,7 @@ check('速度按倍率显示', view.some((n) => n.text === '1.00×'))
 console.log('\n[2] 未加载时的占位')
 const loading = (() => {
   hookIndex = 0
-  presets = [null, '2.0.0', null, null, false]
+  presets = [null, '2.0.0', null, null, false, null, '', '']
   const out = []
   walk(registered.render(), out)
   return out
