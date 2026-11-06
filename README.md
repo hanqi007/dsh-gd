@@ -86,11 +86,24 @@ node test/smoke-panel.mjs   # 26 项
 
 ## 安装
 
-```bash
-dsh plugin --profile desktop add ./dsh-gd-2.0.0.tgz
+**直接下载**：[`dsh-gd-2.7.1.tgz`](https://github.com/hanqi007/dsh-gd/releases/download/v2.7.1/dsh-gd-2.7.1.tgz)（最新正式版）
+
+或者从 [Releases 页面](https://github.com/hanqi007/dsh-gd/releases) 挑版本。
+
+下载后用 DSH 自带的命令安装。安装前先**完全退出 DSH**，装完再启动。
+
+```powershell
+# 官方桌面端（profile 固定为 desktop）
+D:\DSH\resources\runtime\cli\bin\dsh.cmd plugin --profile desktop add "C:\Downloads\dsh-gd-2.7.1.tgz"
+
+# 浏览器 WebUI（profile 为 web）
+npx -y @deepseek-ai/dsh plugin --profile web add "C:\Downloads\dsh-gd-2.7.1.tgz"
 ```
 
-装完重启应用生效。
+装完在 **设置 → 星布谷地** 里能看到配置入口。
+
+> `dsh.cmd` 位于 DSH 安装目录下。若你的安装位置不同，把路径换成实际的
+> `<DSH安装目录>\resources\runtime\cli\bin\dsh.cmd`。
 
 ## License
 
